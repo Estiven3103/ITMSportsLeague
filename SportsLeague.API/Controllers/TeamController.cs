@@ -19,16 +19,12 @@ namespace SportsLeague.API.Controllers
 
         private readonly IMapper _mapper;
 
-        private readonly ILogger<TeamController> _logger;
-
 
         public TeamController(
 
         ITeamService teamService,
 
-        IMapper mapper,
-
-        ILogger<TeamController> logger)
+        IMapper mapper)
 
         {
 
@@ -36,7 +32,6 @@ namespace SportsLeague.API.Controllers
 
             _mapper = mapper;
 
-            _logger = logger;
 
         }
 
