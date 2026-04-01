@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using SportsLeague.API.Services;
 using SportsLeague.DataAccess.Context;
 using SportsLeague.DataAccess.Repositories;
 using SportsLeague.Domain.Interfaces.Repositories;
 using SportsLeague.Domain.Interfaces.Services;
 using SportsLeague.Domain.Services;
+using SportsLeague.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +32,11 @@ builder.Services.AddScoped<IRefereeRepository, RefereeRepository>();
 
 builder.Services.AddScoped<ITournamentRepository, TournamentRepository>(); 
 
-builder.Services.AddScoped<ITournamentTeamRepository, TournamentTeamRepository>(); 
+builder.Services.AddScoped<ITournamentTeamRepository, TournamentTeamRepository>();
+
+builder.Services.AddScoped<ITournamentSponsorRepository, TournamentSponsorRepository>();
+
+builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
 
 // ── Services ──
 
@@ -42,6 +48,10 @@ builder.Services.AddScoped<IRefereeService, RefereeService>();
 
 builder.Services.AddScoped<ITournamentService, TournamentService>();
 
+builder.Services.AddScoped<ITournamentSponsorService, TournamentSponsorService>();
+
+builder.Services.AddScoped<ISponsorService, SponsorService>();
+
 
 // ── AutoMapper ──
 
@@ -50,7 +60,17 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // ── Controllers ──
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+
+    .AddJsonOptions(options =>
+
+    {
+
+        options.JsonSerializerOptions.ReferenceHandler =
+
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+    });
 
 
 // ── Swagger ──
@@ -84,6 +104,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.Run();

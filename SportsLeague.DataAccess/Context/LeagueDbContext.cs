@@ -16,7 +16,6 @@ namespace SportsLeague.DataAccess.Context
 
         }
 
-
         public DbSet<Team> Teams => Set<Team>();
 
         public DbSet<Player> Players => Set<Player>();
@@ -27,11 +26,19 @@ namespace SportsLeague.DataAccess.Context
 
         public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>();
 
+        public DbSet<Sponsor> Sponsors { get; set; }
+
+        public DbSet<TournamentSponsor> TournamentSponsors { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
         {
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Sponsor>()
+
+            .HasIndex(s => s.Name) .IsUnique();
 
 
             // ── Team Configuration ──
@@ -263,6 +270,52 @@ namespace SportsLeague.DataAccess.Context
                 entity.HasIndex(tt => new { tt.TournamentId, tt.TeamId })
 
                 .IsUnique();
+
+                });
+
+
+            // ── TournamentSponsor Configuration ──
+
+            modelBuilder.Entity<TournamentSponsor>(entity =>
+
+            {
+
+                entity.HasKey(ts => ts.Id);
+
+                entity.Property(ts => ts.ContractAmount)
+
+                    .IsRequired();
+
+                entity.Property(ts => ts.JoinedAt)
+
+                    .IsRequired();
+
+                // Relacion con Tournament
+
+                entity.HasOne(ts => ts.Tournament)
+
+                    .WithMany(t => t.TournamentSponsors)
+
+                    .HasForeignKey(ts => ts.TournamentId)
+
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relacion con Sponsor
+
+                entity.HasOne(ts => ts.Sponsor)
+
+                    .WithMany(s => s.TournamentSponsors)
+
+                    .HasForeignKey(ts => ts.SponsorId)
+
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Indice unico compuesto
+
+                entity.HasIndex(ts => new { ts.TournamentId, ts.SponsorId })
+
+
+                    .IsUnique();
 
             });
 
