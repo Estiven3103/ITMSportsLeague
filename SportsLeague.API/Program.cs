@@ -69,6 +69,8 @@ builder.Services.AddScoped<IMatchEventService, MatchEventService>();
 
 builder.Services.AddScoped<MatchValidationHelper>();
 
+builder.Services.AddScoped<IStandingsService, StandingsService>();
+
 
 // ── AutoMapper ──
 
